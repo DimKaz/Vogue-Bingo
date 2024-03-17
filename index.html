@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raid Night Bingo</title>
+<button class="newCardButton" id="newCard" onclick="newCard()">New Board</button>
+<br>
+<br>
+<html>
+  <div class='board'>
+    <div class='header' id='cell_h0' >V</div>
+    <div class='header' id='cell_h1' >O</div>
+    <div class='header' id='cell_h2' >G</div>
+    <div class='header' id='cell_h3' >U</div>
+    <div class='header' id='cell_h4' >E</div>
+
+    <button class='cell' id='cell_0' ></button>  
+    <button class='cell' id='cell_1' ></button>  
+    <button class='cell' id='cell_2' ></button>  
+    <button class='cell' id='cell_3' ></button>  
+    <button class='cell' id='cell_4' ></button>  
+                                                 
+    <button class='cell' id='cell_5' ></button>  
+    <button class='cell' id='cell_6' ></button>  
+    <button class='cell' id='cell_7' ></button>  
+    <button class='cell' id='cell_8' ></button>  
+    <button class='cell' id='cell_9' ></button>  
+                                                 
+    <button class='cell' id='cell_10' ></button> 
+    <button class='cell' id='cell_11' ></button> 
+    <button class='cell' id='cell_12'>🍆</button>
+    <button class='cell' id='cell_13' ></button> 
+    <button class='cell' id='cell_14' ></button> 
+                                                 
+    <button class='cell' id='cell_15' ></button> 
+    <button class='cell' id='cell_16' ></button> 
+    <button class='cell' id='cell_17' ></button> 
+    <button class='cell' id='cell_18' ></button> 
+    <button class='cell' id='cell_19' ></button> 
+                                                 
+    <button class='cell' id='cell_20' ></button> 
+    <button class='cell' id='cell_21' ></button> 
+    <button class='cell' id='cell_22' ></button> 
+    <button class='cell' id='cell_23' ></button> 
+    <button class='cell' id='cell_24' ></button> 
+  </div>
+</html>
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    background-image: url("Raid_Night_Bingo_Spooky.png");
+    background-repeat: no-repeat;
+    background-size: 75vh auto;
+    overflow: hidden;
+    background-position: top left;
+}
+.newCardButton {
+    width: 10vh;
+    height: 5vh;
+    position: absolute;
+    top:  1vh;
+    left: 1vh;
+    color: black;
+    background-color: darkorange;
+    border: .5vh darkgreen solid;
+    font-weight: bold;
+    font-size: 1.5vh;
+}
+.newCardButton:hover {
+    color: darkorange;
+    background-color: purple;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(5, 5fr);
+    text-align: center;
+    top: 31.5vh;
+    left: 3.5vh;
+    position: fixed
+}
+
+.header{
+    background-color: #A4A4A4;
+    border: .5vh black solid;
+    text-align: center;
+    font-size: 6vh;
+    
+}
+.cell, .mark{
+    height: 11.5vh;
+    width: 13vh;
+    background-color: lightgrey;
+    
+    border: 0.5vh black solid;
+    font-size: 1.5vh;
+    padding:0.25vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.cell:hover{
+    background-color: pink;
+
+}
+.cell.selected{
+    background-color: orange;
+
+}
+.cell.selected.bingo{
+    background-color: darkgreen;
+}
+.mark {
+    background: url("circle.png");
+    position: absolute;
+    z-index: 10;
+    pointer-events: none
+}
+</style>
+
+<script>
+
+window.onload = initAll;
+var boardSelect = new Array(25);
+var squareElements = new Array(25);
+var usedNums = new Array(1000);
+
+function initAll() {
+    for(var i=0 ; i<25 ; i++){
+        squareElements[i] = document.getElementById('cell_' + i);
+        squareElements[i].setAttribute("board_id", i);
+        if(i != 12){
+        setOnClick(squareElements[i]);
+        }
+    }
+    newCard();
+}
+
+function newCard() {
+    
+    for(var i=0 ; i<25 ; i++){
+        if(i != 12){
+            setSquare(i);
+            squareElements[i].classList.remove("selected");
+        } else if(i == 12){
+            boardSelect[12] = true;
+            squareElements[i].classList.add("selected");
+        }
+        squareElements[i].classList.remove("bingo");
+    }
+    for (var i = 1; i < usedNums.length; i++) {
+        usedNums[i] = false;
+    };
+
+}
+
+function setSquare(thisSquare){
+    var colPlace = new Array(0,1,2,3,4,0,1,2,3,4,0,1,2,3,4,0,1,2,3,4,0,1,2,3,4);
+    var newNum = 0;
+    
+    do{
+        newNum = getNewNum();
+    }while(usedNums[newNum]);
+    
+    usedNums[newNum] = true;
+    var element = squareElements[thisSquare];
+    element.textContent = choices[newNum];
+    boardSelect[thisSquare] = false;
+
+};
+
+function setOnClick(element){
+    element.addEventListener(
+        "click",
+        function(e){
+            var elem = e.target;
+            var idNumber = elem.getAttribute("board_id");
+            var col = new Array(5);
+            var row = new Array(5);
+            
+            //Selecting unselected
+            if(boardSelect[idNumber] == false){
+                elem.classList.add("selected");
+                boardSelect[idNumber] = true;
+            }
+            //Deselect
+            else if(boardSelect[idNumber] == true){
+                elem.classList.remove("selected");
+                boardSelect[idNumber] = false;
+            }
+            
+            for(var k = 0; k<5; k++){
+                col[k] = 0;
+                row[k] = 0;
+            }
+            for(var i = 0; i < 25; i++){
+                if( boardSelect[i]){
+                    //squareElements[i].classList.add("selected");
+                    col[i%5]++;
+                    if(i >= 0 && i < 5){
+                        row[0]++;
+                    }
+                    if(i >= 5 && i < 10){ 
+                        row[1]++;
+                    }
+                    if(i >= 10 && i < 15){
+                        row[2]++;
+                    }
+                    if(i >= 15 && i < 20){
+                        row[3]++;
+                    }
+                    if(i >= 20 && i < 25){
+                        row[4]++;
+                    }
+                }
+                //else{
+                //    document.getElementById(cellNameBase + (i)).classList.remove("selected");
+                //}
+            }
+            for(var j = 0; j<5; j++){
+                if(col[j] >=5){
+                    bingo = true;
+                    squareElements[j].classList.add("bingo");
+                    squareElements[j+5].classList.add("bingo");
+                    squareElements[j+10].classList.add("bingo");
+                    squareElements[j+15].classList.add("bingo");
+                    squareElements[j+20].classList.add("bingo");
+                }
+                if(row[j] >=5){
+                    bingo = true;
+                    squareElements[j*5].classList.add("bingo");
+                    squareElements[j*5+1].classList.add("bingo");
+                    squareElements[j*5+2].classList.add("bingo");
+                    squareElements[j*5+3].classList.add("bingo");
+                    squareElements[j*5+4].classList.add("bingo");
+                }
+            }
+            if(boardSelect[0] && boardSelect[6] && boardSelect[12] && boardSelect[18] && boardSelect[24]){
+                bingo = true;
+                squareElements[0].classList.add("bingo");
+                squareElements[6].classList.add("bingo");
+                squareElements[12].classList.add("bingo");
+                squareElements[18].classList.add("bingo");
+                squareElements[24].classList.add("bingo");
+            }
+            if(boardSelect[4] && boardSelect[8] && boardSelect[12] && boardSelect[16] && boardSelect[20]){
+                bingo = true;
+                squareElements[4].classList.add("bingo");
+                squareElements[8].classList.add("bingo");
+                squareElements[12].classList.add("bingo");
+                squareElements[16].classList.add("bingo");
+                squareElements[20].classList.add("bingo");
+            }
+        },
+        false);
+}
+
+function getNewNum() {
+  return Math.floor(Math.random() * choices.length);
+}
+
+
+
+var choices = new Array(
+"Lycell",
+"Blade Republican",
+"Talking about other games",
+"🏳‍🌈Gay🏳‍🌈",
+"Red flag",
+"Maou's dick",
+"\"People suck\" - Derek",
+"\"On God. FR FR. No cap.\"",
+"Milo kills Andi",
+"Diana",
+"Di's Ex",
+"Legal Stuff? Ask Kaslo.",
+"Maou speaks spanish",
+"Yuki and Di's forever friendship.",
+"Di breaks into song.",
+"Derek talks to puppy,",
+"Medical Stuff? Ask Maou.",
+"OMG. Prog!",
+"Pop culture reference/discussion",
+"You can't see it, but Andi is rolling his eyes.",
+"Damn we're bad. Regression.",
+"\"Okay Maou focus.\"",
+"Laugh so much we lose focus.",
+"New VC meme title.",
+"Late start ",
+"Start on time ",
+"Fast first phase ",
+"Maou damage down ",
+"UAV walk off the platform",
+"Di goes to wrong shape ",
+"Someone doubts Di ",
+"Derek, the only person who has cleared, fucks up the mechanic ",
+"Derek only right 80% of the time ",
+"Tower *Derp*",
+"Look north *Derp*",
+"Blade goes stupid",
+"\"I'm gonna die\" then lives",
+"\"I fucked my rotation\"",
+"Thicc tail",
+"“I hate you all”",
+"\"Fuck this mechanic\"",
+"Battle Litany? Where?",
+"Milo's not going to heal you now.",
+"Di forgets partner",
+"\"Crit is a lie\"",
+
+);
+
+</script>
+
+</body>
+</html>
