@@ -207,7 +207,7 @@ function setOnClick(element){
             }
             for(var i = 0; i < 25; i++){
                 if( boardSelect[i]){
-                    //squareElements[i].classList.add("selected");
+                    squareElements[i].classList.remove("bingo");
                     col[i%5]++;
                     if(i >= 0 && i < 5){
                         row[0]++;
@@ -225,9 +225,6 @@ function setOnClick(element){
                         row[4]++;
                     }
                 }
-                //else{
-                //    document.getElementById(cellNameBase + (i)).classList.remove("selected");
-                //}
             }
             for(var j = 0; j<5; j++){
                 if(col[j] >=5){
