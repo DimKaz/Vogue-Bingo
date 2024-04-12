@@ -4,6 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Raid Night Bingo</title>
 <button class="newCardButton" id="newCard" onclick="newCard()">New Board</button>
+<button class="rerollButton" id="rerollButton" onclick="rerollModeToggle()">Rerolls</button>
 <br>
 <br>
 <html>
@@ -76,6 +77,22 @@ body {
     color: darkorange;
     background-color: purple;
 }
+.rerollButton {
+    width: 10vh;
+    height: 5vh;
+    position: absolute;
+    top:  7vh;
+    left: 1vh;
+    color: black;
+    background-color: yellow;
+    border: .5vh darkgreen solid;
+    font-weight: bold;
+    font-size: 1.5vh;
+}
+.rerollButton:hover {
+    color: darkorange;
+    background-color: purple;
+}
 
 .board {
     display: grid;
@@ -105,6 +122,11 @@ body {
     justify-content: center;
     align-items: center;
 }
+
+.cell.rerolling{
+    background-color: yellow;
+}
+
 .cell:hover{
     background-color: pink;
 
@@ -116,18 +138,26 @@ body {
 .cell.selected.bingo{
     background-color: darkgreen;
 }
-    #secret {
-        position: absolute;
-        color: white;
-        background-color: transparent;
-        bottom:-30vh;
-        right:0vh;
-        width: 20vh;
-        height: 10vh;
-        font-size: 2vh;
-        text-align: center;
-        font-weight: bold;
-    
+#secret {
+    position: absolute;
+    color: white;
+    background-color: transparent;
+    bottom:-30vh;
+    right:0vh;
+    width: 20vh;
+    height: 10vh;
+    font-size: 2vh;
+    text-align: center;
+    font-weight: bold;
+}
+##.place-on-click {
+##  height:100%;
+##  background-color:transparent;
+##  position:absolute;
+##  z-index:26;
+##  top:0; bottom:0; left:0; right:0;
+##
+##}
 </style>
 
 <script>
@@ -136,6 +166,9 @@ window.onload = initAll;
 var boardSelect = new Array(25);
 var squareElements = new Array(25);
 var usedNums = new Array(1000);
+var rerollMode = false;
+var rerolls = 0;
+var baseRerolls = 3;
 
 function initAll() {
     for(var i=0 ; i<25 ; i++){
@@ -149,7 +182,8 @@ function initAll() {
 }
 
 function newCard() {
-    
+    rerolls = baseRerolls;
+    document.getElementById('rerollButton').textContent = 'Rerolls (' + rerolls + ')';
     for(var i=0 ; i<25 ; i++){
         if(i != 12){
             setSquare(i);
@@ -190,6 +224,16 @@ function setOnClick(element){
             var col = new Array(5);
             var row = new Array(5);
             
+            if(rerollMode){
+                setSquare(idNumber);
+                rerollModeToggle();
+                rerolls = rerolls - 1;
+                document.getElementById('rerollButton').textContent = 'Rerolls (' + rerolls + ')';
+                elem.classList.remove("selected");
+                boardSelect[idNumber] = false;
+            return;
+            }
+            
             //Selecting unselected
             if(boardSelect[idNumber] == false){
                 elem.classList.add("selected");
@@ -207,7 +251,6 @@ function setOnClick(element){
             }
             for(var i = 0; i < 25; i++){
                 if( boardSelect[i]){
-                    squareElements[i].classList.remove("bingo");
                     col[i%5]++;
                     if(i >= 0 && i < 5){
                         row[0]++;
@@ -263,12 +306,85 @@ function setOnClick(element){
         },
         false);
 }
+function rerollModeToggle(){
+    if (rerollMode) {
+        rerollMode = false;
+        for(var i=0 ; i<25 ; i++){
+            if(i != 12){
+                squareElements[i].classList.remove("rerolling");
+            }
+        }
+    } else if (rerolls > 0){
+        rerollMode = true;
+        for(var i=0 ; i<25 ; i++){
+            if(i != 12){
+                squareElements[i].classList.add("rerolling");
+            }
+        }
+        
+    }
+}
 
 function getNewNum() {
   return Math.floor(Math.random() * choices.length);
 }
 
+//const images = ["bat.png"];
+//const box = document.querySelector('.place-on-click');
 
+//function placeImage(x,y) {
+//  const nextImage = images[i];
+//  const img = document.createElement('img');
+//  img.setAttribute('src', nextImage);
+//
+//  // get image width and height before it is appended
+//  var img_width, img_height;
+//  const img_load = new Image();
+//
+//  img_load.addEventListener('load', function(e) {
+//      img_width = img_load.width * scale;
+//      img_height = img_load.height * scale;
+//
+//      // calculate how many pixels is bleeding
+//      x_bleed_right =   (x - img_width / 2 )  + img_width   - box.offsetWidth;
+//      x_bleed_left =    (x - img_width / 2 );
+//      y_bleed_bottom =  (y - img_height / 2 ) + img_height  - box.offsetHeight;
+//      y_bleed_top =     (y - img_height / 2 );
+//
+//      img.style.position = 'absolute'
+//
+//      if (x_bleed_right > 0) {
+//        img.style.left = box.offsetWidth - (img_width / 2) + 'px';
+//      } else if (x_bleed_left < 0) {
+//        img.style.left = (img_width / 2) + 'px'
+//      } else {
+//        img.style.left = x + 'px';
+//      }
+//
+//      if (y_bleed_bottom > 0) {
+//        img.style.top = box.offsetHeight - (img_height / 2) + 'px';
+//      } else if (y_bleed_top < 0) {
+//        img.style.top = (img_height / 2) + 'px';
+//      } else {
+//        img.style.top = y + 'px';
+//      }
+//
+//      img.style.transform = 'translate(-50%, -50%) scale('+scale+')';
+//      img.style.pointerEvents = 'none';
+//
+//      box.appendChild(img);
+//  });
+//  img_load.src = nextImage;
+//
+//}
+
+//box.addEventListener("click", function(event) {
+//event.preventDefault();
+// const posLeft = event.pageX - box.offsetLeft;
+// const posTop = event.pageY - box.offsetTop;
+//placeImage(posLeft, posTop);
+//
+//})
 
 var choices = new Array(
 "Lycell",
@@ -316,6 +432,7 @@ var choices = new Array(
 "Milo's not going to heal you now.",
 "Di forgets partner",
 "\"Crit is a lie\"",
+"I should've napped"
 
 );
 
