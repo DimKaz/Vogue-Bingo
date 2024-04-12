@@ -8,7 +8,10 @@
 <br>
 <br>
 <html>
-<body>
+<canvas id="confetti"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
+<body font-family: Georgia, serif;>
+    
   <div class='board'>
     <div class='header' id='cell_h0' >V</div>
     <div class='header' id='cell_h1' >O</div>
@@ -150,6 +153,15 @@ body {
     text-align: center;
     font-weight: bold;
 }
+canvas#confetti {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0px;
+  left: 0px;
+  z-index: 1000;
+  pointer-events: none;
+}
 ##.place-on-click {
 ##  height:100%;
 ##  background-color:transparent;
@@ -169,6 +181,8 @@ var usedNums = new Array(1000);
 var rerollMode = false;
 var rerolls = 0;
 var baseRerolls = 3;
+var bingo = false;
+const jsConfetti = new JSConfetti();
 
 function initAll() {
     for(var i=0 ; i<25 ; i++){
@@ -182,6 +196,7 @@ function initAll() {
 }
 
 function newCard() {
+    bingo = false;
     rerolls = baseRerolls;
     document.getElementById('rerollButton').textContent = 'Rerolls (' + rerolls + ')';
     for(var i=0 ; i<25 ; i++){
@@ -224,6 +239,8 @@ function setOnClick(element){
             var col = new Array(5);
             var row = new Array(5);
             
+            bingo = false;
+            
             if(rerollMode){
                 setSquare(idNumber);
                 rerollModeToggle();
@@ -231,18 +248,17 @@ function setOnClick(element){
                 document.getElementById('rerollButton').textContent = 'Rerolls (' + rerolls + ')';
                 elem.classList.remove("selected");
                 boardSelect[idNumber] = false;
-            return;
-            }
-            
-            //Selecting unselected
-            if(boardSelect[idNumber] == false){
-                elem.classList.add("selected");
-                boardSelect[idNumber] = true;
-            }
-            //Deselect
-            else if(boardSelect[idNumber] == true){
-                elem.classList.remove("selected");
-                boardSelect[idNumber] = false;
+            } else {
+                //Selecting unselected
+                if(boardSelect[idNumber] == false){
+                    elem.classList.add("selected");
+                    boardSelect[idNumber] = true;
+                }
+                //Deselect
+                else if(boardSelect[idNumber] == true){
+                    elem.classList.remove("selected");
+                    boardSelect[idNumber] = false;
+                }
             }
             
             for(var k = 0; k<5; k++){
@@ -250,6 +266,7 @@ function setOnClick(element){
                 row[k] = 0;
             }
             for(var i = 0; i < 25; i++){
+                squareElements[i].classList.remove("bingo");
                 if( boardSelect[i]){
                     col[i%5]++;
                     if(i >= 0 && i < 5){
@@ -302,6 +319,11 @@ function setOnClick(element){
                 squareElements[12].classList.add("bingo");
                 squareElements[16].classList.add("bingo");
                 squareElements[20].classList.add("bingo");
+            }
+            if(bingo){
+                jsConfetti.addConfetti({
+                    emojis: ['🌈', '🍆', '🏳‍🌈','💦','✨'],
+                }).then(() => jsConfetti.addConfetti())
             }
         },
         false);
@@ -395,19 +417,19 @@ var choices = new Array(
 "Maou's dick",
 "\"People suck\" - Derek",
 "\"On God. FR FR. No cap.\"",
-"Milo kills Andi",
+"PvP enabled",
 "Diana",
 "Di's Ex",
 "Legal Stuff? Ask Kaslo.",
-"Maou speaks spanish",
+"Maou habla español",
 "Yuki and Di's forever friendship.",
-"Di breaks into song.",
-"Derek talks to puppy,",
+"Discord karaoke",
+"Derek talks to puppy 🐶",
 "Medical Stuff? Ask Maou.",
-"OMG. Prog!",
+"Technically that's prog!",
 "Pop culture reference / discussion",
 "You can't see it, but Andi is rolling his eyes.",
-"Damn we're bad. Regression.",
+"Damn, we're bad. Regression.",
 "\"Okay Maou focus.\"",
 "Laugh so much we lose focus.",
 "New VC meme title.",
@@ -415,7 +437,7 @@ var choices = new Array(
 "Start on time ",
 "Fast first phase ",
 "Maou damage down ",
-"UAV walk off the platform",
+"Walk off the platform / into wall",
 "Di goes to wrong shape ",
 "Someone doubts Di ",
 "Derek, the only person who has cleared, fucks up the mechanic ",
@@ -429,10 +451,14 @@ var choices = new Array(
 "“I hate you all”",
 "\"Fuck this mechanic\"",
 "Battle Litany? Where?",
-"Milo's not going to heal you now.",
-"Di forgets partner",
+"Milo's spite",
 "\"Crit is a lie\"",
-"I should've napped"
+"I should've napped",
+"Phone call 📞",
+"Is it or isn't it a dot?",
+"🧛‍",
+"Someone's computer/internet self destructs",
+"Someone has a metal breakdown"
 
 );
 
